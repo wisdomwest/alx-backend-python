@@ -21,3 +21,10 @@ class TestGithubOrgClient(unittest.TestCase):
         test = GithubOrgClient(org)
         test.org()
         mock.assert_called_once_with(f"https://api.github.com/orgs/{org}")
+
+    def test_public_repos_url(self):
+        '''Test the GithubOrgClient._public_repos_url method.'''
+        with patch('client.GithubOrgClient._public_repos_url') as mock:
+            test = GithubOrgClient("google")
+            test._public_repos_url()
+            mock.assert_called_once()

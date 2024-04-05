@@ -5,7 +5,7 @@ from client import GithubOrgClient
 from parameterized import parameterized
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -34,8 +34,9 @@ class TestGithubOrgClient(unittest.TestCase):
         '''Test the GithubOrgClient.public_repos method.'''
         payload = [{"name": "google"}]
         mock.return_value = payload
-        with patch('client.GithubOrgClient._public_repos_url') as mock_pub:
+        with patch('client.GithubOrgClient._public_repos_url',
+                   new_callable=PropertyMock) as mock_public_repos_url:
+            mock_public_repos_url.return_value = "https://api.github.com/"
             test = GithubOrgClient("google")
-            self.assertEqual(test.public_repos(), ["google"])
-            mock_pub.assert_called_once()
-            mock.assert_called_once_with("google")
+            assert test.public_repos() == ["google"]
+            mock.assert_called_once_with("https://api.github.com/")

@@ -2,7 +2,7 @@
 '''Module for testing the client module.'''
 
 from client import GithubOrgClient
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 import json
 import unittest
 from unittest.mock import PropertyMock, patch
@@ -40,3 +40,12 @@ class TestGithubOrgClient(unittest.TestCase):
             test = GithubOrgClient("google")
             assert test.public_repos() == ["google"]
             mock.assert_called_once_with("https://api.github.com/")
+
+    @parameterized_class([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False)
+    ])
+    def test_has_license(self, repo, license, expected):
+        '''Test the GithubOrgClient.has_license method.'''
+        test = GithubOrgClient.has_license(repo, license)
+        self.assertEqual(test, expected)
